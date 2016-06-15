@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Freedom</string>
+
+    <string name="map_button">look on map</string>
+
+
+    <string name="region">Region</string>
+
+    <string-array name="regions_array">
+        <item>Northland</item>
+        <item>Auckland</item>
+        <item>Central North Island</item>
+        <item>Lower North Island</item>
+        <item>Marlborough and Tasman</item>
+        <item>Canterbury</item>
+        <item>West Coast</item>
+        <item>Otago</item>
+        <item>Southland</item></string-array>
+
+
+</resources>
