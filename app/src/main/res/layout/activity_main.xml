@@ -9,14 +9,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.android.freedom.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Region"
-        android:layout_above="@+id/regions_spinner"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
     <Spinner
         android:id="@+id/regions_spinner"
         android:layout_width="wrap_content"
@@ -24,17 +16,30 @@
         android:spinnerMode="dialog"
         android:entries = "@array/regions_array"
         android:prompt = "@string/region"
-        android:layout_centerVertical="true">
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        >
     </Spinner>
+
+    <TextView
+        android:id="@+id/spinner_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/regions_spinner"
+        android:visibility="invisible"
+        />
 -
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/map_button"
-        android:id="@+id/button"
+        android:id="@+id/map_opening_button"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="58dp" />
+
+
+        />
 
 
 </RelativeLayout>

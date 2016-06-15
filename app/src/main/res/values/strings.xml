@@ -3,6 +3,8 @@
 
     <string name="map_button">look on map</string>
 
+    <string name="result_auckland">Auckland blows</string>
+    <string name="result_canterbury">Go climbing!</string>
 
     <string name="region">Region</string>
 
