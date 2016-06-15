@@ -29,7 +29,16 @@
         android:layout_below="@id/regions_spinner"
         android:visibility="invisible"
         />
--
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Goes to detail"
+        android:id="@+id/detail_opening_button"
+        android:layout_above="@+id/map_opening_button"
+        android:layout_centerHorizontal="true"
+        android:onClick="goToDetail"/>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,6 +49,8 @@
 
 
         />
+
+
 
 
 </RelativeLayout>

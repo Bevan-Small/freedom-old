@@ -1,5 +1,6 @@
 package com.example.android.freedom;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -8,6 +9,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+
+
+    // creates a constant MESSAGE to pass into the intent
+    public final static String EXTRA_MESSAGE = "com.example.android.freedom.MESSAGE";
 
     Spinner spRegions;
 
@@ -47,14 +52,27 @@ public class MainActivity extends AppCompatActivity {
             tv.setText(R.string.result_canterbury);
             tv.setVisibility(View.VISIBLE);
         } else {
+            TextView tv = (TextView) findViewById(R.id.spinner_result);
+            tv.setText(null);
             makeResultInvisible();
         }
     }
 
-    // makes the spinner result text invisible
+    /** makes the spinner result text invisible */
     public void makeResultInvisible() {
         TextView tv = (TextView) findViewById(R.id.spinner_result);
         tv.setVisibility(View.INVISIBLE);
+    }
+
+    /** Goes to detail selected*/
+    public void goToDetail (View view){
+        // creates an intent, puts the text from the spinner result text view in it, and
+        // starts and activity of the type specified in the intent
+        Intent intent = new Intent(this, DetailActivity.class);
+        TextView tv = (TextView)findViewById(R.id.spinner_result);
+        String detailText = tv.getText().toString();
+        intent.putExtra(EXTRA_MESSAGE, detailText);
+        startActivity(intent);
     }
 }
 
