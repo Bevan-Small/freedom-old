@@ -91,7 +91,10 @@ public class DetailActivity extends AppCompatActivity {
         } catch (ClassNotFoundException e) {
             Log.e("Read error", "Class not found");
         }
-
-
     }
+
+
+
+
+
 }
