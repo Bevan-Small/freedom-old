@@ -47,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
         // Initialises experimental southland Arraylist of String[]
 
         for (int i = 0; i < 10; i++) {
-            String[] temporaryItem1 = {i + "","Southland"+i};
-            String[] temporaryItem2 = {2*i +"", "West Coast"+i};
+            String[] temporaryItem1 = {i + "","Southland"+i, "Southland is nice"+i,"Its in Southland"+i};
+            String[] temporaryItem2 = {2*i +"", "West Coast"+i, "West Coast is nice"+i,"Its on the West Coast"+i};
             southlandListItems.add(temporaryItem1);
             westCoastListItems.add(temporaryItem2);
         }
@@ -76,11 +76,20 @@ public class MainActivity extends AppCompatActivity {
         // update to take multiple strings, pass string[] array i guess
         resultListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                // Passes string array
+                Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
+                String[] detailArray = (String[]) parent.getItemAtPosition(position);
+                intent.putExtra("String array", detailArray);
+                startActivity(intent);
+
+                /*
+                // Passes single string
                 Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
                 String detailText = (String) parent.getItemAtPosition(position);
                 intent.putExtra(EXTRA_MESSAGE, detailText);
                 startActivity(intent);
-
+                */
             }
         });
 
@@ -89,8 +98,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // works! determines which result array to display
+    // works! determines which result array to display and displays it
     // adapters implemented in here
+    // push to async task or other thread?
+
     public void populateResultList() {
         // Tidy up by referring to the globally defined custom adapter?
 

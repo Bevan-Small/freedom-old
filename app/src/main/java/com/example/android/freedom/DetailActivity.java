@@ -1,12 +1,11 @@
 package com.example.android.freedom;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,19 +17,44 @@ public class DetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e("Message to myself", "Detail activity started");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        Intent intent = getIntent();
-        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        // fetching the string array from the intent
+        Bundle extras = getIntent().getExtras();
+        String[] detailArray = extras.getStringArray("String array");
 
-        // Log.e("Passed message", message);
+        int entryId = Integer.parseInt(detailArray[0]);
+        String entryTitle = detailArray[1];
+        String entryBodytext = detailArray[2];
+        String entryAddress = detailArray[3];
+
+
+        // Tester textview
         TextView tv = (TextView) findViewById(R.id.detail_title);
-        tv.setText(message);
+        tv.setText(entryId + " " + entryTitle);
+
+        // Filling actual fields with data from intent
+        TextView tv1 = (TextView) findViewById(R.id.detail_id_textview);
+        tv1.setText(entryId+"");
+
+        TextView tv2 = (TextView) findViewById(R.id.detail_title_textview);
+        tv2.setText(entryTitle);
+
+        ImageView imgv1 = (ImageView)findViewById(R.id.detail_imageview);
+        int imageId = getResources().getIdentifier("southland"+(entryId+1), "drawable", getPackageName());
+        imgv1.setImageResource(imageId);
+
+        TextView tv3 = (TextView) findViewById(R.id.detail_body_text_view);
+        tv3.setText(entryBodytext);
+
+        TextView tv4 = (TextView) findViewById(R.id.detail_address_text_view);
+        tv4.setText(entryAddress);
 
         // trialling read/write stuff
 
-        readData();
+        // readData();
 
     }
 
@@ -57,6 +81,7 @@ public class DetailActivity extends AppCompatActivity {
 
 
     // Does work! Takes a premade file produced in eclipse, and puts the text on display!
+    // Probably chuck in an asynctask or other thread
     // miraculous
     public void readData() {
 
@@ -69,16 +94,16 @@ public class DetailActivity extends AppCompatActivity {
 
             PlaceData place = (PlaceData) os.readObject();
 
-            TextView tv1 = (TextView) findViewById(R.id.id_text_view);
+            TextView tv1 = (TextView) findViewById(R.id.detail_id_textview);
             tv1.setText(place.getData()[0]);
 
-            TextView tv2 = (TextView) findViewById(R.id.title_text_view);
+            TextView tv2 = (TextView) findViewById(R.id.detail_title_textview);
             tv2.setText(place.getData()[1]);
 
-            TextView tv3 = (TextView) findViewById(R.id.body_text_view);
+            TextView tv3 = (TextView) findViewById(R.id.detail_body_text_view);
             tv3.setText(place.getData()[2]);
 
-            TextView tv4 = (TextView) findViewById(R.id.address_text_view);
+            TextView tv4 = (TextView) findViewById(R.id.detail_address_text_view);
             tv4.setText(place.getData()[3]);
 
             os.close();
