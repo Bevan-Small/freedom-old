@@ -7,6 +7,7 @@
     <string name="result_canterbury">Go climbing!</string>
 
     <string name="region">Region</string>
+    <string name="array_list_result_decriptive_image">Decriptive image</string>
 
     <string-array name="regions_array">
         <item>Northland</item>

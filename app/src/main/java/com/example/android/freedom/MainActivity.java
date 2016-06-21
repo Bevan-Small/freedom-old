@@ -2,7 +2,10 @@ package com.example.android.freedom;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -43,13 +47,10 @@ public class MainActivity extends AppCompatActivity {
         // Initialises experimental southland Arraylist of String[]
 
         for (int i = 0; i < 10; i++) {
-            String[] temporaryItem = {i + "","Southland"};
-            String[] temporaryItem2 = {i +"", "West Coast"};
-            southlandListItems.add(temporaryItem);
-        }
-
-        for (int i=0;i<southlandListItems.size();i++){
-            Log.e("Message to myself", "Array ids before adapter" + southlandListItems.get(i)[0]);
+            String[] temporaryItem1 = {i + "","Southland"+i};
+            String[] temporaryItem2 = {2*i +"", "West Coast"+i};
+            southlandListItems.add(temporaryItem1);
+            westCoastListItems.add(temporaryItem2);
         }
 
         spRegions = (Spinner) findViewById(R.id.regions_spinner);
@@ -67,13 +68,12 @@ public class MainActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parentView) {
                 resultListView.setVisibility(View.INVISIBLE);
             }
-
-
         });
 
 
         // Sends user to detail screen when a list result is clicked
         // Currently taking a single string of data
+        // update to take multiple strings, pass string[] array i guess
         resultListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
@@ -87,10 +87,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
     // works! determines which result array to display
     // adapters implemented in here
     public void populateResultList() {
+        // Tidy up by referring to the globally defined custom adapter?
 
+        // can probably tidy this up referring globally to the spRegions spinner
         Spinner spinner = (Spinner) findViewById(R.id.regions_spinner);
 
         if (spinner.getSelectedItem().toString().equals("Auckland")) {
@@ -110,16 +114,21 @@ public class MainActivity extends AppCompatActivity {
             ListView listView = (ListView) findViewById(R.id.result_listview);
             listView.setAdapter(adapter);
             listView.setVisibility(View.VISIBLE);
+
         } else if (spinner.getSelectedItem().toString().equals("Southland")) {
-
             // Implementation of the custom adapter
-
-
             CustomListAdapter adapter = new CustomListAdapter(this,southlandListItems);
             ListView listView = (ListView) findViewById(R.id.result_listview);
-
             listView.setAdapter(adapter);
             listView.setVisibility(View.VISIBLE);
+
+        } else if (spinner.getSelectedItem().toString().equals("West Coast")) {
+            // Implementation of the custom adapter
+            CustomListAdapter adapter = new CustomListAdapter(this,westCoastListItems);
+            ListView listView = (ListView) findViewById(R.id.result_listview);
+            listView.setAdapter(adapter);
+            listView.setVisibility(View.VISIBLE);
+
         } else {
             ListView listView = (ListView) findViewById(R.id.result_listview);
             listView.setVisibility(View.INVISIBLE);
@@ -155,10 +164,9 @@ public class MainActivity extends AppCompatActivity {
             return itemList.size();
         }
 
-
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-
+            // this does the heavy lifting, inflating the sublayout in the list and populating the textviews
             // Can call getSystemService directly when in the activity. It works though, so I aint touching it
             LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View inflatedView = inflater.inflate(R.layout.array_list_result,null);
@@ -169,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
                 // sets title and body text
                 TextView tt1 = (TextView) inflatedView.findViewById(R.id.array_list_result_title);
                 TextView tt2 = (TextView) inflatedView.findViewById(R.id.array_list_result_bodytext);
+                ImageView im1 = (ImageView) inflatedView.findViewById(R.id.array_list_result_imageview);
 
                 if (tt1 != null) {
                     tt1.setText(entry[0]);
@@ -176,6 +185,9 @@ public class MainActivity extends AppCompatActivity {
 
                 if (tt2 != null) {
                     tt2.setText(entry[1]);
+
+                    int imageId = getResources().getIdentifier("southland"+(getItemId(position)+1), "drawable", getPackageName());
+                    im1.setImageResource(imageId);
                 }
             }
             return inflatedView;
