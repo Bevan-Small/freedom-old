@@ -88,7 +88,7 @@ public class DetailActivity extends AppCompatActivity {
         String dataFileName = "Auckland.bin"; //@res/values/
 
         try {
-            InputStream ins = getResources().openRawResource(getResources().getIdentifier("auckland","raw", getPackageName()));
+            InputStream ins = getResources().openRawResource(getResources().getIdentifier("auckland_single_item","raw", getPackageName()));
 
             ObjectInputStream os = new ObjectInputStream(ins);
 

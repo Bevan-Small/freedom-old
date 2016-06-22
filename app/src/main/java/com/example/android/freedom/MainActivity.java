@@ -2,17 +2,13 @@ package com.example.android.freedom;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -20,18 +16,13 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
-
-    String[] aucklandItems = {"Auckland item 1", "Auckland item 2", "Auckland item 3", "Auckland item 4", "Auckland item 5"};
-    String[] canterburyItems = {"Canterbury item 1", "Canterbury item 2", "Canterbury item 3", "Canterbury item 4", "Canterbury item 5"};
-    String[] cenNorthIslItems = {"Central North Island item 1", "Central North Island item 2", "Central North Island item 3", "Central North Island item 4", "Central North Island item 5"};
-
-    ArrayList<String[]> southlandListItems = new ArrayList();
-    ArrayList<String[]> westCoastListItems = new ArrayList();
 
     // creates a constant MESSAGE to pass into the intent
     public final static String EXTRA_MESSAGE = "com.example.android.freedom.MESSAGE";
@@ -43,15 +34,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // Initialises experimental southland Arraylist of String[]
-
-        for (int i = 0; i < 10; i++) {
-            String[] temporaryItem1 = {i + "","Southland"+i, "Southland is nice"+i,"Its in Southland"+i};
-            String[] temporaryItem2 = {2*i +"", "West Coast"+i, "West Coast is nice"+i,"Its on the West Coast"+i};
-            southlandListItems.add(temporaryItem1);
-            westCoastListItems.add(temporaryItem2);
-        }
 
         spRegions = (Spinner) findViewById(R.id.regions_spinner);
         resultListView = (ListView) findViewById(R.id.result_listview);
@@ -77,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         resultListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                // Passes string array
+                // Passes string array. Can only be used with southland and west coast currently
                 Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
                 String[] detailArray = (String[]) parent.getItemAtPosition(position);
                 intent.putExtra("String array", detailArray);
@@ -96,49 +78,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // works! determines which result array to display and displays it
-    // adapters implemented in here
     // push to async task or other thread?
 
     public void populateResultList() {
-        // Tidy up by referring to the globally defined custom adapter?
 
         // can probably tidy this up referring globally to the spRegions spinner
         Spinner spinner = (Spinner) findViewById(R.id.regions_spinner);
+        String placeName = spinner.getSelectedItem().toString();
 
-        if (spinner.getSelectedItem().toString().equals("Auckland")) {
-            ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.list_result, R.id.list_result_textview, aucklandItems);
-            ListView listView = (ListView) findViewById(R.id.result_listview);
-            listView.setAdapter(adapter);
-            listView.setVisibility(View.VISIBLE);
+        if (placeName.equals("Auckland")) {
+            updateListResult(placeName);
 
-        } else if (spinner.getSelectedItem().toString().equals("Canterbury")) {
-            ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.list_result, R.id.list_result_textview, canterburyItems);
-            ListView listView = (ListView) findViewById(R.id.result_listview);
-            listView.setAdapter(adapter);
-            listView.setVisibility(View.VISIBLE);
+        } else if (placeName.equals("Northland")) {
+            updateListResult(placeName);
 
-        } else if (spinner.getSelectedItem().toString().equals("Central North Island")) {
-            ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.list_result, R.id.list_result_textview, cenNorthIslItems);
-            ListView listView = (ListView) findViewById(R.id.result_listview);
-            listView.setAdapter(adapter);
-            listView.setVisibility(View.VISIBLE);
+        } else if (placeName.equals("Central North Island")) {
+            updateListResult(placeName);
 
-        } else if (spinner.getSelectedItem().toString().equals("Southland")) {
-            // Implementation of the custom adapter
-            CustomListAdapter adapter = new CustomListAdapter(this,southlandListItems);
-            ListView listView = (ListView) findViewById(R.id.result_listview);
-            listView.setAdapter(adapter);
-            listView.setVisibility(View.VISIBLE);
+        } else if (placeName.equals("Lower North Island")) {
+            updateListResult(placeName);
 
-        } else if (spinner.getSelectedItem().toString().equals("West Coast")) {
-            // Implementation of the custom adapter
-            CustomListAdapter adapter = new CustomListAdapter(this,westCoastListItems);
-            ListView listView = (ListView) findViewById(R.id.result_listview);
-            listView.setAdapter(adapter);
-            listView.setVisibility(View.VISIBLE);
+        } else if (placeName.equals("Marlborough and Tasman")) {
+            updateListResult(placeName);
+
+        } else if (placeName.equals("Canterbury")) {
+            updateListResult(placeName);
+
+        } else if (placeName.equals("West Coast")) {
+            updateListResult(placeName);
+
+        } else if (placeName.equals("Otago")) {
+            updateListResult(placeName);
+
+        } else if (placeName.equals("Southland")) {
+            updateListResult(placeName);
 
         } else {
             ListView listView = (ListView) findViewById(R.id.result_listview);
@@ -146,6 +121,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    //
+    public void updateListResult(String placeName){
+        // Implementation of the custom adapter with data reading
+        // Tidy up by referring to the globally defined custom adapter?
+        CustomListAdapter adapter = new CustomListAdapter(this, readArrayData(placeName.replaceAll(" ","_").toLowerCase()));
+        ListView listView = (ListView) findViewById(R.id.result_listview);
+        listView.setAdapter(adapter);
+        listView.setVisibility(View.VISIBLE);
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     // Custom adapter that takes a List<String[]> where a single String[] is one entry
@@ -162,27 +148,29 @@ public class MainActivity extends AppCompatActivity {
             this.context = context;
         }
 
-        public Object getItem(int position){
+        public Object getItem(int position) {
             return itemList.get(position);
         }
 
-        public long getItemId(int position){
+        public long getItemId(int position) {
             // This is stupid. Put a long in the array rather than string
             return Long.parseLong((itemList.get(position)[0]));
         }
 
-        public int getCount(){
+        public int getCount() {
             return itemList.size();
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            Log.e("Message to myself","Updating info in listview");
+
             // this does the heavy lifting, inflating the sublayout in the list and populating the textviews
             // Can call getSystemService directly when in the activity. It works though, so I aint touching it
-            LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View inflatedView = inflater.inflate(R.layout.array_list_result,null);
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View inflatedView = inflater.inflate(R.layout.array_list_result, null);
 
-            String[] entry = (String[])getItem(position);
+            String[] entry = (String[]) getItem(position);
 
             if (entry != null) {
                 // sets title and body text
@@ -197,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
                 if (tt2 != null) {
                     tt2.setText(entry[1]);
 
-                    int imageId = getResources().getIdentifier("southland"+(getItemId(position)+1), "drawable", getPackageName());
+                    int imageId = getResources().getIdentifier("southland" + (getItemId(position) + 1), "drawable", getPackageName());
                     im1.setImageResource(imageId);
                 }
             }
@@ -206,6 +194,28 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // Reads data fom serialised file. Returns arraylist to be passed into adapter
+    // Takes in placeName to find file
+    public ArrayList<String[]> readArrayData(String placeName){
+
+        try {
+            InputStream ins = getResources().openRawResource(getResources().getIdentifier(placeName,"raw", getPackageName()));
+            ObjectInputStream os = new ObjectInputStream(ins);
+            EntryData data = (EntryData)os.readObject();
+
+            os.close();
+            ins.close();
+            return data.getData();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }
 
