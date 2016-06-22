@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,9 +52,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        // Sends user to detail screen when a list result is clicked
-        // Currently taking a single string of data
-        // update to take multiple strings, pass string[] array i guess
+        // Sends user to detail screen when a list result is clicked. passes data entry
         resultListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -65,13 +62,6 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("String array", detailArray);
                 startActivity(intent);
 
-                /*
-                // Passes single string
-                Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
-                String detailText = (String) parent.getItemAtPosition(position);
-                intent.putExtra(EXTRA_MESSAGE, detailText);
-                startActivity(intent);
-                */
             }
         });
 
@@ -163,8 +153,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            Log.e("Message to myself","Updating info in listview");
-
             // this does the heavy lifting, inflating the sublayout in the list and populating the textviews
             // Can call getSystemService directly when in the activity. It works though, so I aint touching it
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
