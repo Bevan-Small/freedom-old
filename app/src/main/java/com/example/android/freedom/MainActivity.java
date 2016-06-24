@@ -15,10 +15,10 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.io.FileNotFoundException;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -68,10 +68,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // works! determines which result array to display and displays it
-    // push to async task or other thread?
+    ///////////////////////////////////List item logic/////////////////////////////////////////////
 
+    /**
+     * Determines which result array to display and displays it
+     * push to async task or other thread?
+     */
     public void populateResultList() {
 
         // can probably tidy this up referring globally to the spRegions spinner
@@ -112,21 +114,24 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //
-    public void updateListResult(String placeName){
-        // Implementation of the custom adapter with data reading
+    /**
+     * updates list info based on placeName passed in
+     *
+     */
+    public void updateListResult(String placeName) {
         // Tidy up by referring to the globally defined custom adapter?
-        CustomListAdapter adapter = new CustomListAdapter(this, readArrayData(placeName.replaceAll(" ","_").toLowerCase()));
+        CustomListAdapter adapter = new CustomListAdapter(this, readCsv(placeName.replaceAll(" ", "_").toLowerCase()));
         ListView listView = (ListView) findViewById(R.id.result_listview);
         listView.setAdapter(adapter);
         listView.setVisibility(View.VISIBLE);
     }
 
 
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    // Custom adapter that takes a List<String[]> where a single String[] is one entry
-    // Works!
-
+    /////////////////////////////////Adapter///////////////////////////////////////////////////
+    /**
+     * Custom adapter that takes a List<String[]> where a single String[] is one entry
+     *
+     */
     public class CustomListAdapter extends BaseAdapter implements ListAdapter {
 
         ArrayList<String[]> itemList = new ArrayList();
@@ -173,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
                 if (tt2 != null) {
                     tt2.setText(entry[1]);
 
-                    int imageId = getResources().getIdentifier("southland" + (getItemId(position) + 1), "drawable", getPackageName());
+                    int imageId = getResources().getIdentifier("southland" + (getItemId(position)), "drawable", getPackageName());
                     im1.setImageResource(imageId);
                 }
             }
@@ -182,29 +187,82 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    // Reads data fom serialised file. Returns arraylist to be passed into adapter
-    // Takes in placeName to find file
-    public ArrayList<String[]> readArrayData(String placeName){
+    ////////////////////////////////Csv reader//////////////////////////////////////////////
+    /**
+     * Reads in file named placeName.csv. Parses and adds all lines to result ArrayList
+     * returns result
+     */
+    public ArrayList<String[]> readCsv(String placeName) {
+
+        ArrayList<String[]> result = new ArrayList<String[]>();
+
+        InputStream is = getResources().openRawResource(getResources().getIdentifier(placeName, "raw", getPackageName()));
+        InputStreamReader isr = new InputStreamReader(is);
+        BufferedReader br = new BufferedReader(isr, 8192); // 2nd arg is buffer size
 
         try {
-            InputStream ins = getResources().openRawResource(getResources().getIdentifier(placeName,"raw", getPackageName()));
-            ObjectInputStream os = new ObjectInputStream(ins);
-            EntryData data = (EntryData)os.readObject();
+            String line;
+            while (true) {
+                line = br.readLine();
+                // readLine() returns null if no more lines in the file
+                if (line == null) {
+                    break;
+                }
+                result.add(parseCsvLine(line));
+            }
 
-            os.close();
-            ins.close();
-            return data.getData();
+            isr.close();
+            is.close();
+            br.close();
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        } finally {
+
         }
-        return null;
+
+        return result;
     }
 
+    /**
+     * Takes in a string of format "id,title,bodytext,address" and
+     * returns a String[] = {id, title, bodytext, address}
+     */
+    private static String[] parseCsvLine(String line) {
+
+        // Break line into components
+        String[] entry = new String[4];
+        int index = 0;
+        for (int i = 0; i < 4; i++) {
+            // breaks line into {id, title, bodytext, address} components
+            // marksFlag signals if a " mark has been read, to accommodate entries with commas
+            // that have been surrounded in " marks
+
+            boolean marksFlag = false;
+            StringBuilder dataPiece = new StringBuilder();
+
+            while (index < line.length()) {
+                if ((line.charAt(index) == ',') && (!marksFlag)) {
+                    // breaks loop if comma found and marksFlag is not true
+                    // skips comma as well
+                    index++;
+                    break;
+                }
+
+                if (line.charAt(index) == '\"') {
+                    // flip flag and skip append
+                    marksFlag = !marksFlag;
+                } else {
+                    // add char
+                    dataPiece.append(line.charAt(index));
+                }
+
+                index++;
+            }
+            entry[i] = dataPiece.toString();
+        }
+        return entry;
+    }
 }
 
 
