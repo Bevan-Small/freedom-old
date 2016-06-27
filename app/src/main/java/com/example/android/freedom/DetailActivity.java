@@ -35,7 +35,7 @@ public class DetailActivity extends AppCompatActivity {
         tv2.setText(entryTitle);
 
         ImageView imgv1 = (ImageView)findViewById(R.id.detail_imageview);
-        int imageId = getResources().getIdentifier("southland"+(entryId+1), "drawable", getPackageName());
+        int imageId = getResources().getIdentifier("southland"+(entryId), "drawable", getPackageName());
         imgv1.setImageResource(imageId);
 
         TextView tv3 = (TextView) findViewById(R.id.detail_body_text_view);

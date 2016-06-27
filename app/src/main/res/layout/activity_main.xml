@@ -13,53 +13,22 @@
         android:id="@+id/regions_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:spinnerMode="dialog"
-        android:entries = "@array/regions_array"
-        android:prompt = "@string/region"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        >
-    </Spinner>
+        android:layout_alignParentTop="true"
+        android:entries="@array/regions_array"
+        android:prompt="@string/region"
+        android:spinnerMode="dialog"></Spinner>
 
-    <TextView
-        android:id="@+id/spinner_result"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/regions_spinner"
-        android:visibility="invisible"
-        />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Goes to detail"
-        android:id="@+id/detail_opening_button"
-        android:onClick="goToDetail"
-        android:layout_above="@+id/map_opening_button"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/map_button"
-        android:id="@+id/map_opening_button"
-
-
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
 
     <ListView
+        android:id="@+id/result_listview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/result_listview"
-        android:layout_below="@+id/spinner_result"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/detail_opening_button"
-        android:visibility="invisible"/>
+        android:layout_below="@+id/regions_spinner"
+        android:visibility="invisible" />
 
 
 </RelativeLayout>
