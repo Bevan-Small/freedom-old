@@ -45,11 +45,13 @@ public class DetailActivity extends AppCompatActivity {
         tv4.setText(entryAddress);
 
         // Sends user off to maps app
-        tv4.setOnClickListener(new View.OnClickListener() {
+        View addressBlock = findViewById(R.id.detail_address_block);
+
+        addressBlock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                // TODO parse addresses into a map searchable uri
+                // TODO add functionality for coordinate processing
 
 
                 // NZ centred coords and zoom @-41.0824,174.7099,6z

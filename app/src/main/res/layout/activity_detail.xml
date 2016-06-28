@@ -1,72 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:layout_height="match_parent">
 
-    tools:context="com.example.android.freedom.DetailActivity">
-
-    <TextView
-        android:id="@+id/detail_title_textview"
+    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="8dp"
-        android:text="Title"
-        android:textColor="#FFFFFF"
-        android:background="@color/myCardTitleColor"
-        android:textSize="17sp" />
-
-    <ImageView
-        android:id="@+id/detail_imageview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/detail_title_textview"
-
-        android:scaleType="centerCrop"
-        android:src="@drawable/southland9" />
-
-    <TextView
-        android:id="@+id/detail_body_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/detail_imageview"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="8dp"
-        android:text="Body Text"
-        android:textSize="14sp" />
-
-
-    <LinearLayout
-        android:id="@+id/detail_address_block"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/detail_body_text_view"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="8dp">
+
+        tools:context="com.example.android.freedom.DetailActivity">
 
         <TextView
+            android:id="@+id/detail_title_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:text="Location:"
-            android:textSize="14sp"
-            />
+            android:background="@color/myCardTitleColor"
+            android:paddingBottom="8dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp"
+            android:text="Title"
+            android:textColor="#FFFFFF"
+            android:textSize="17sp" />
+
+        <ImageView
+            android:id="@+id/detail_imageview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/detail_title_textview"
+
+            android:scaleType="centerCrop"
+            android:src="@drawable/southland9" />
 
         <TextView
-            android:id="@+id/detail_address_text_view"
-            android:layout_width="wrap_content"
+            android:id="@+id/detail_body_text_view"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/detail_imageview"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
             android:paddingTop="8dp"
-            android:text="Address"
+            android:text="Body Text"
             android:textSize="14sp" />
+
+
+        <LinearLayout
+            android:id="@+id/detail_address_block"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/detail_body_text_view"
+            android:orientation="vertical"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Location:"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/detail_address_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:paddingTop="8dp"
+                android:text="Address"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+
     </LinearLayout>
-
-
-</LinearLayout>
+</ScrollView>
