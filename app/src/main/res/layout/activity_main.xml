@@ -7,19 +7,33 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.android.freedom.MainActivity">
+    tools:context="com.example.android.freedom.MainActivity"
+    android:background="@color/colorBackground">
 
     <Spinner
         android:id="@+id/regions_spinner"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:entries="@array/regions_array"
-        android:prompt="@string/region"
-        android:spinnerMode="dialog"></Spinner>
+        android:spinnerMode="dropdown"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        />
 
+
+    <View
+        android:id="@+id/spinner_boundary_line"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_below="@id/regions_spinner"
+
+        />
 
     <ListView
         android:id="@+id/result_listview"
@@ -27,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/regions_spinner"
+        android:layout_below="@+id/spinner_boundary_line"
         android:visibility="invisible" />
 
 

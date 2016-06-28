@@ -2,9 +2,13 @@ package com.example.android.freedom;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -33,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         spRegions = (Spinner) findViewById(R.id.regions_spinner);
         resultListView = (ListView) findViewById(R.id.result_listview);
@@ -161,22 +166,22 @@ public class MainActivity extends AppCompatActivity {
             // this does the heavy lifting, inflating the sublayout in the list and populating the textviews
             // Can call getSystemService directly when in the activity. It works though, so I aint touching it
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View inflatedView = inflater.inflate(R.layout.array_list_result, null);
+            View inflatedView = inflater.inflate(R.layout.array_list_result_with_cardview, null);
 
             String[] entry = (String[]) getItem(position);
 
             if (entry != null) {
                 // sets title and body text
-                TextView tt1 = (TextView) inflatedView.findViewById(R.id.array_list_result_title);
-                TextView tt2 = (TextView) inflatedView.findViewById(R.id.array_list_result_bodytext);
-                ImageView im1 = (ImageView) inflatedView.findViewById(R.id.array_list_result_imageview);
+                TextView tt1 = (TextView) inflatedView.findViewById(R.id.array_list_cardview_result_title);
+                TextView tt2 = (TextView) inflatedView.findViewById(R.id.array_list_cardview_result_bodytext);
+                ImageView im1 = (ImageView) inflatedView.findViewById(R.id.array_list_cardview_result_imageview);
 
                 if (tt1 != null) {
-                    tt1.setText(entry[0]);
+                    tt1.setText(entry[1]);
                 }
 
                 if (tt2 != null) {
-                    tt2.setText(entry[1]);
+                    tt2.setText(entry[2]);
 
                     int imageId = getResources().getIdentifier("southland" + (getItemId(position)), "drawable", getPackageName());
                     im1.setImageResource(imageId);
@@ -262,6 +267,39 @@ public class MainActivity extends AppCompatActivity {
             entry[i] = dataPiece.toString();
         }
         return entry;
+    }
+
+    ///////////////////////// Menu stuff///////////////////////////////////
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        //respond to menu item selection
+        switch (item.getItemId()) {
+            case R.id.action_email:
+                // send email to me
+                String emailBody = "Please add a title, description and address for your submission, and attach a photo. Thanks for submitting!";
+
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setData(Uri.parse("mailto:"+"bevan.r.small@gmail.com")); // only email apps should handle this
+                intent.putExtra(Intent.EXTRA_SUBJECT, "New Freedom submission");
+                intent.putExtra(Intent.EXTRA_TEXT, emailBody);
+
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }
+
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
 

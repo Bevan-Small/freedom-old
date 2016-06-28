@@ -21,6 +21,7 @@ public class DetailActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         String[] detailArray = extras.getStringArray("String array");
 
+        // received data
         int entryId = Integer.parseInt(detailArray[0]);
         String entryTitle = detailArray[1];
         String entryBodytext = detailArray[2];
@@ -28,8 +29,7 @@ public class DetailActivity extends AppCompatActivity {
 
 
         // Filling actual fields with data from intent
-        TextView tv1 = (TextView) findViewById(R.id.detail_id_textview);
-        tv1.setText(entryId+"");
+
 
         TextView tv2 = (TextView) findViewById(R.id.detail_title_textview);
         tv2.setText(entryTitle);
@@ -64,4 +64,7 @@ public class DetailActivity extends AppCompatActivity {
         });
 
     }
+
+
+
 }
