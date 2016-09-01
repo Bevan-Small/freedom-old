@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,26 +28,23 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    // creates a constant MESSAGE to pass into the intent
-    public final static String EXTRA_MESSAGE = "com.example.android.freedom.MESSAGE";
-
     Spinner spRegions;
     ListView resultListView;
+    CustomListAdapter resultsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         spRegions = (Spinner) findViewById(R.id.regions_spinner);
         resultListView = (ListView) findViewById(R.id.result_listview);
 
-        // create listener to change result text when the spinner option is changed
+        // creates listener to change result text when the spinner option is changed
         spRegions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // Fills out results list view
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position,
+                                       long id) {
                 populateResultList();
             }
 
@@ -56,17 +54,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-        // Sends user to detail screen when a list result is clicked. passes data entry
+        // Sends user to detail screen when a list item is clicked. Passes item info as a string array
         resultListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                // Passes string array. Can only be used with southland and west coast currently
                 Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
                 String[] detailArray = (String[]) parent.getItemAtPosition(position);
                 intent.putExtra("String array", detailArray);
                 startActivity(intent);
-
             }
         });
 
@@ -77,13 +72,10 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Determines which result array to display and displays it
-     * push to async task or other thread?
      */
     public void populateResultList() {
 
-        // can probably tidy this up referring globally to the spRegions spinner
-        Spinner spinner = (Spinner) findViewById(R.id.regions_spinner);
-        String placeName = spinner.getSelectedItem().toString();
+        String placeName = spRegions.getSelectedItem().toString();
 
         if (placeName.equals("Auckland")) {
             updateListResult(placeName);
@@ -113,29 +105,33 @@ public class MainActivity extends AppCompatActivity {
             updateListResult(placeName);
 
         } else {
-            ListView listView = (ListView) findViewById(R.id.result_listview);
-            listView.setVisibility(View.INVISIBLE);
+            resultListView.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    /**
+     * updates list info based on placeName passed in. makes the list visible
+     */
+    public void updateListResult(String placeName) {
+        // TODO rather than use a new adapter, clear old one and add new items
+
+        ArrayList<String[]> placeDataEntries = readCsv(placeName.replaceAll(" ", "_").toLowerCase());
+
+        if (placeDataEntries.size() > 0) {
+            resultsAdapter = new CustomListAdapter(this, placeDataEntries);
+            resultListView.setAdapter(resultsAdapter);
+            resultListView.setVisibility(View.VISIBLE);
+        } else {
+            resultListView.setVisibility(View.INVISIBLE);
         }
 
     }
 
-    /**
-     * updates list info based on placeName passed in
-     *
-     */
-    public void updateListResult(String placeName) {
-        // Tidy up by referring to the globally defined custom adapter?
-        CustomListAdapter adapter = new CustomListAdapter(this, readCsv(placeName.replaceAll(" ", "_").toLowerCase()));
-        ListView listView = (ListView) findViewById(R.id.result_listview);
-        listView.setAdapter(adapter);
-        listView.setVisibility(View.VISIBLE);
-    }
-
 
     /////////////////////////////////Adapter///////////////////////////////////////////////////
+
     /**
      * Custom adapter that takes a List<String[]> where a single String[] is one entry
-     *
      */
     public class CustomListAdapter extends BaseAdapter implements ListAdapter {
 
@@ -153,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public long getItemId(int position) {
-            // This is stupid. Put a long in the array rather than string
+            // TODO review when id system is changed
             return Long.parseLong((itemList.get(position)[0]));
         }
 
@@ -161,9 +157,9 @@ public class MainActivity extends AppCompatActivity {
             return itemList.size();
         }
 
+        // this inflates the sublayout in the list and populates the text views and imageview
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            // this does the heavy lifting, inflating the sublayout in the list and populating the textviews
             // Can call getSystemService directly when in the activity. It works though, so I aint touching it
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View inflatedView = inflater.inflate(R.layout.array_list_result_with_cardview, null);
@@ -192,7 +188,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     ////////////////////////////////Csv reader//////////////////////////////////////////////
+
     /**
      * Reads in file named placeName.csv. Parses and adds all lines to result ArrayList
      * returns result
@@ -201,29 +199,36 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayList<String[]> result = new ArrayList<String[]>();
 
-        InputStream is = getResources().openRawResource(getResources().getIdentifier(placeName, "raw", getPackageName()));
-        InputStreamReader isr = new InputStreamReader(is);
-        BufferedReader br = new BufferedReader(isr, 8192); // 2nd arg is buffer size
+        BufferedReader br = null;
 
         try {
+
+            InputStream is = getResources().openRawResource(getResources().getIdentifier(placeName,
+                    "raw", getPackageName()));
+            InputStreamReader isr = new InputStreamReader(is);
+            br = new BufferedReader(isr, 8192); // 2nd arg is buffer size
+
             String line;
             while (true) {
                 line = br.readLine();
-                // readLine() returns null if no more lines in the file
+
                 if (line == null) {
                     break;
                 }
                 result.add(parseCsvLine(line));
             }
 
-            isr.close();
-            is.close();
-            br.close();
-
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("FILE ERROR", "Unable to read place data file: " + placeName + ".txt. " + e);
         } finally {
+            try {
+                br.close();
 
+            } catch (IOException e) {
+                Log.e("FILE ERROR", "Failed to close place data file: " + placeName + ".txt. " + e);
+            } catch (NullPointerException e) {
+                Log.e("FILE ERROR", "Unable to read place data file: " + placeName + ".txt. " + e);
+            }
         }
 
         return result;
@@ -283,11 +288,12 @@ public class MainActivity extends AppCompatActivity {
         //respond to menu item selection
         switch (item.getItemId()) {
             case R.id.action_email:
-                // send email to me
-                String emailBody = "Please add a title, description and address for your submission, and attach a photo. Thanks for submitting!";
+                // send email to Bevan
+                String emailBody = "Please add a title, description and address for your " +
+                        "submission, and attach a photo. Thanks for submitting!";
 
                 Intent intent = new Intent(Intent.ACTION_SENDTO);
-                intent.setData(Uri.parse("mailto:"+"bevan.r.small@gmail.com")); // only email apps should handle this
+                intent.setData(Uri.parse("mailto:" + "bevan.r.small@gmail.com"));
                 intent.putExtra(Intent.EXTRA_SUBJECT, "New Freedom submission");
                 intent.putExtra(Intent.EXTRA_TEXT, emailBody);
 

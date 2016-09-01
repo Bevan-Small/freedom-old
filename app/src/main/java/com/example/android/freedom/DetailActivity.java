@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,7 +12,7 @@ public class DetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.e("Message to myself", "Detail activity started");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
@@ -27,10 +26,7 @@ public class DetailActivity extends AppCompatActivity {
         String entryBodytext = detailArray[2];
         final String entryAddress = detailArray[3];
 
-
         // Filling actual fields with data from intent
-
-
         TextView tv2 = (TextView) findViewById(R.id.detail_title_textview);
         tv2.setText(entryTitle);
 
@@ -51,8 +47,7 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                // TODO add functionality for coordinate processing
-
+                // TODO add functionality for coordinate processing when id system is changed
 
                 // NZ centred coords and zoom @-41.0824,174.7099,6z
                 // parsed would be geo:-41.0824,174.7099?z=6&q=example+address+goes+here
@@ -66,7 +61,4 @@ public class DetailActivity extends AppCompatActivity {
         });
 
     }
-
-
-
 }
